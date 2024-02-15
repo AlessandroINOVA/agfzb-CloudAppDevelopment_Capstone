@@ -61,6 +61,8 @@ coverage.xml
 *.log
 local_settings.py
 
+# Node.js stuff
+node_modules
 
 # Flask stuff:
 instance/
