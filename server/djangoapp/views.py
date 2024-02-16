@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
-from .restapis import get_dealers_from_cf, get_request, get_dealer_by_id, get_dealers_by_state, get_dealer_reviews_from_cf
+from .restapis import get_dealers_from_cf, get_request, get_dealer_by_id, get_dealers_by_state, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -20,19 +20,21 @@ def login_request(request):
     # Handles POST request
     if request.method == "POST":
         # Get username and password from request.POST dictionary
-        username = request.POST['username']
-        password = request.POST['psw']
+        #username = request.POST['username']
+        #password = request.POST['psw']
+        username = request.POST.get('username')
+        password = request.POST.get('psw')
         # Try to check if provide credential can be authenticated
         user = authenticate(username=username, password=password)
         if user is not None:
             # If user is valid, call login method to login current user
             login(request, user)
-            return redirect('djangoapp:index')
+            return redirect('djangoapp:index.html')
         else:
             # If not, return to login page again
-            return render(request, 'djangoapp/index', context)
+            return render(request, 'djangoapp/index.html', context)
     else:
-        return render(request, 'djangoapp/index', context)
+        return render(request, 'djangoapp/index.html', context)
 
 def registration_request(request):
     context = {}
@@ -61,7 +63,7 @@ def registration_request(request):
                                             password=password)
             # Login the user and redirect to course list page
             login(request, user)
-            return redirect("djangoapp:index")
+            return redirect("djangoapp:index.html")
         else:
             return render(request, 'djangoapp/registration.html', context)
 def logout_request(request):
@@ -142,3 +144,15 @@ def get_dealer_details(request, dealer_id):
 # def add_review(request, dealer_id):
 # ...
 
+def add_review(request, dealer_id):
+    if request.user.is_authenticated and request.method == 'POST':
+        # Get user information from request.POST
+        review["time"] = datetime.utcnow().isoformat()
+        review["dealership"] = dealer_id
+        review["review"] = request.POST['review']
+        json_payload = dict()
+        json_payload["review"] = review
+        url = "https://ideoalessand-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
+        added_review = post_request(url, json_payload, dealer_id=dealer_id)
+        print(added_review)
+        return HttpResponse(added_review)
