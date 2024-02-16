@@ -13,25 +13,36 @@ def get_request(url, **kwargs):
     print("GET from {} ".format(url))
     try:
         # Call get method of requests library with URL and parameters
-        if api_key:
-            params = dict()
-            params["text"] = kwargs["text"]
-            params["version"] = kwargs["version"]
-            params["features"] = kwargs["features"]
-            params["return_analyzed_text"] = kwargs["return_analyzed_text"]
-            response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
-                                        auth=HTTPBasicAuth('apikey', api_key))
-        else:
-            response = requests.get(url, headers={'Content-Type': 'application/json'},
+        response = requests.get(url, headers={'Content-Type': 'application/json'},
                                         params=kwargs)
+        status_code = response.status_code
+        print("With status {} ".format(status_code))
+        json_data = json.loads(response.text)
+        return json_data
     except:
         # If any error occurs
         print("Network exception occurred")
-    status_code = response.status_code
-    print("With status {} ".format(status_code))
-    json_data = json.loads(response.text)
-    return json_data
 
+
+def get_request_api(url, **kwargs):
+    #print(kwargs)
+    print("GET from {} ".format(url))
+    api_key = "6YldyyoUV4os_Y1-ofoOrGacQSweIo1qx_JOWNi5BsHS"
+    try:
+        params = dict()
+        params["text"] = kwargs["text"]
+        params["version"] = kwargs["version"]
+        params["features"] = kwargs["features"]
+        params["return_analyzed_text"] = kwargs["return_analyzed_text"]
+        response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
+                                    auth=HTTPBasicAuth('apikey', api_key))
+        status_code = response.status_code
+        print("With status {} ".format(status_code))
+        json_data = json.loads(response.text)
+        return json_data
+    except:
+        # If any error occurs
+        print("Network exception occurred")
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
 
@@ -76,13 +87,13 @@ def get_dealer_reviews_from_cf(url, dealerId):
             review_doc = review
             print("REview",review_doc)
             # Create a CarDealer object with values in `doc` object
-            if review_doc["purchase"]:
-                review_doc.sentiment = analyze_review_sentiments(review_doc.review)
-                dealer_review_obj = DealerReview(dealership=review_doc["dealership"], name=review_doc["name"], purchase=review_doc["purchase"],
-                                    review=review_doc["review"], purchase_date=review_doc["purchase_date"], car_make=review_doc["car_make"],
-                                    car_model=review_doc["car_model"],
-                                    car_year=review_doc["car_year"], sentiment=review_doc["sentiment"], review_id=review_doc["id"])
-                results.append(dealer_review_obj)
+            review_sentiment = analyze_review_sentiments(review_doc["review"])
+            dealer_review_obj = DealerReview(dealership=review_doc["dealership"], name=review_doc["name"], purchase=review_doc["purchase"],
+                                review=review_doc["review"], purchase_date=review_doc["purchase_date"], car_make=review_doc["car_make"],
+                                car_model=review_doc["car_model"],
+                                car_year=review_doc["car_year"], sentiment=review_sentiment, review_id=review_doc["id"])
+            results.append(dealer_review_obj)
+            print("Review analysis", dealer_review_obj)
 
     return results
 
@@ -142,5 +153,6 @@ def get_dealers_by_state(url, dealerState):
 # - Get the returned sentiment label such as Positive or Negative
 
 def analyze_review_sentiments(dealerreview):
-    get_request()
+    url = "https://api.eu-de.natural-language-understanding.watson.cloud.ibm.com/instances/d0b97188-51f0-4179-8dc6-22c40542dd04/v1/analyze}?version=2022-04-07&url=www.ibm.com&features=keywords,entities&entities.emotion=true&entities.sentiment=true&keywords.emotion=true&keywords.sentiment=true"
+    get_request_api(url)
 

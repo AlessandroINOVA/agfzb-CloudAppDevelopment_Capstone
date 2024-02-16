@@ -44,8 +44,12 @@ class DealerReview(models.Model):
     
     # Create a toString method for object string representation
     def __str__(self):
-        return "Name: " + self.name + "," + \
-            "Description: " + self.description
+        return "dealership: " + str(self.dealership) + \
+            ", name: " + str(self.name) + ", purchase: " + str(self.purchase) + \
+            ", review: " + str(self.review) + ", purchase_date: " + str(self.purchase_date) + \
+            ", car_make: " + str(self.car_make) + ", car_model: " + str(self.car_model) + \
+            ", car_year: " + str(self.car_year) + ", sentiment: " + str(self.sentiment) + \
+            ", review_id: " + str(self.review_id) 
 # <HINT> Create a Car Model model `class CarModel(models.Model):`:
 # - Many-To-One relationship to Car Make model (One Car Make has many Car Models, using ForeignKey field)
 # - Name
