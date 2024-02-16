@@ -13,8 +13,17 @@ def get_request(url, **kwargs):
     print("GET from {} ".format(url))
     try:
         # Call get method of requests library with URL and parameters
-        response = requests.get(url, headers={'Content-Type': 'application/json'},
-                                    params=kwargs)
+        if api_key:
+            params = dict()
+            params["text"] = kwargs["text"]
+            params["version"] = kwargs["version"]
+            params["features"] = kwargs["features"]
+            params["return_analyzed_text"] = kwargs["return_analyzed_text"]
+            response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
+                                        auth=HTTPBasicAuth('apikey', api_key))
+        else:
+            response = requests.get(url, headers={'Content-Type': 'application/json'},
+                                        params=kwargs)
     except:
         # If any error occurs
         print("Network exception occurred")
@@ -68,10 +77,11 @@ def get_dealer_reviews_from_cf(url, dealerId):
             print("REview",review_doc)
             # Create a CarDealer object with values in `doc` object
             if review_doc["purchase"]:
+                review_doc.sentiment = analyze_review_sentiments(review_doc.review)
                 dealer_review_obj = DealerReview(dealership=review_doc["dealership"], name=review_doc["name"], purchase=review_doc["purchase"],
                                     review=review_doc["review"], purchase_date=review_doc["purchase_date"], car_make=review_doc["car_make"],
                                     car_model=review_doc["car_model"],
-                                    car_year=review_doc["car_year"], review_id=review_doc["id"])
+                                    car_year=review_doc["car_year"], sentiment=review_doc["sentiment"], review_id=review_doc["id"])
                 results.append(dealer_review_obj)
 
     return results
@@ -131,5 +141,6 @@ def get_dealers_by_state(url, dealerState):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
 
-
+def analyze_review_sentiments(dealerreview):
+    get_request()
 
