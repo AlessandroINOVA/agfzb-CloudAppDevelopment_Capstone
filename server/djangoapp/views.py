@@ -29,7 +29,7 @@ def login_request(request):
         if user is not None:
             # If user is valid, call login method to login current user
             login(request, user)
-            return redirect('djangoapp:index.html')
+            return redirect('djangoapp:login')
         else:
             # If not, return to login page again
             return render(request, 'djangoapp/index.html', context)
@@ -63,7 +63,7 @@ def registration_request(request):
                                             password=password)
             # Login the user and redirect to course list page
             login(request, user)
-            return redirect("djangoapp:index.html")
+            return redirect("djangoapp:index")
         else:
             return render(request, 'djangoapp/registration.html', context)
 def logout_request(request):
@@ -72,7 +72,7 @@ def logout_request(request):
     # Logout user in the request
     logout(request)
     # Redirect user back to course list view
-    return redirect('djangoapp:index')
+    return redirect('djangoapp:login')
 
 def static_template(request):
     # If the request method is GET
@@ -147,12 +147,13 @@ def get_dealer_details(request, dealer_id):
 def add_review(request, dealer_id):
     if request.user.is_authenticated and request.method == 'POST':
         # Get user information from request.POST
+        review = dict()
         review["time"] = datetime.utcnow().isoformat()
         review["dealership"] = dealer_id
-        review["review"] = request.POST['review']
+        review["review"] = request.POST.get('review')
         json_payload = dict()
         json_payload["review"] = review
-        url = "https://ideoalessand-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
+        url = "https://ideoalessand-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review/"
         added_review = post_request(url, json_payload, dealer_id=dealer_id)
         print(added_review)
         return HttpResponse(added_review)
