@@ -3,7 +3,11 @@ import json
 # import related models here
 from .models import CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
-
+import json
+from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson.natural_language_understanding_v1 \
+    import Features, EntitiesOptions
 
 # Create a `get_request` to make HTTP GET requests
 # e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
@@ -24,10 +28,10 @@ def get_request(url, **kwargs):
         print("Network exception occurred")
 
 
-def get_request_api(url, **kwargs):
+'''def get_request_api(url, **kwargs):
     #print(kwargs)
     print("GET from {} ".format(url))
-    api_key = "6YldyyoUV4os_Y1-ofoOrGacQSweIo1qx_JOWNi5BsHS"
+    api_key = ""
     try:
         params = dict()
         params["text"] = kwargs["text"]
@@ -42,7 +46,7 @@ def get_request_api(url, **kwargs):
         return json_data
     except:
         # If any error occurs
-        print("Network exception occurred")
+        print("Network exception occurred")'''
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
 
@@ -85,7 +89,7 @@ def get_dealer_reviews_from_cf(url, dealerId):
         for review in reviews:
             # Get its content in `doc` object
             review_doc = review
-            print("REview",review_doc)
+            #print("REview",review_doc)
             # Create a CarDealer object with values in `doc` object
             review_sentiment = analyze_review_sentiments(review_doc["review"])
             dealer_review_obj = DealerReview(dealership=review_doc["dealership"], name=review_doc["name"], purchase=review_doc["purchase"],
@@ -153,6 +157,21 @@ def get_dealers_by_state(url, dealerState):
 # - Get the returned sentiment label such as Positive or Negative
 
 def analyze_review_sentiments(dealerreview):
-    url = "https://api.eu-de.natural-language-understanding.watson.cloud.ibm.com/instances/d0b97188-51f0-4179-8dc6-22c40542dd04/v1/analyze}?version=2022-04-07&url=www.ibm.com&features=keywords,entities&entities.emotion=true&entities.sentiment=true&keywords.emotion=true&keywords.sentiment=true"
-    get_request_api(url)
+    #get_request_api(url, text=dealerreview, version='2022-04-07', features = ['sentiment'], return_analyzed_text = False)
+    #authenticator = IAMAuthenticator( '6YldyyoUV4os_Y1-ofoOrGacQSweIo1qx_JOWNi5BsHS') 
+    #assistant = AssistantV1( version='2019-08-01', authenticator=authenticator )
+    #assistant.set_service_url('https://api.eu-de.natural-language-understanding.watson.cloud.ibm.com/instances/d0b97188-51f0-4179-8dc6-22c40542dd04')
+    authenticator = IAMAuthenticator('6YldyyoUV4os_Y1-ofoOrGacQSweIo1qx_JOWNi5BsHS')
+    natural_language_understanding = NaturalLanguageUnderstandingV1(
+        version='2022-04-07',
+        authenticator=authenticator
+    )
 
+    natural_language_understanding.set_service_url('https://api.eu-de.natural-language-understanding.watson.cloud.ibm.com/instances/d0b97188-51f0-4179-8dc6-22c40542dd04')
+
+    response = natural_language_understanding.analyze( 
+        text=dealerreview,
+        return_analyzed_text = False,
+        language='en',
+        features=Features(entities=EntitiesOptions(sentiment=True))).get_result()
+    return json.dumps(response, indent=2)
