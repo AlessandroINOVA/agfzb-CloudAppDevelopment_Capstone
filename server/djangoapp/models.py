@@ -29,6 +29,23 @@ class CarMake(models.Model):
     def __str__(self):
         return "Name: " + self.name + "," + \
             "Description: " + self.description
+
+class DealerReview(models.Model):
+    dealership = models.CharField(null=True, max_length=100)
+    name = models.CharField(null=True, max_length=50)
+    purchase = models.CharField(null=True, max_length=50)
+    review = models.CharField(null=True, max_length=100)
+    purchase_date = models.DateField(null=True, max_length=50)
+    car_make = models.CharField(null=True, max_length=50)
+    car_model = models.CharField(null=True, max_length=100)
+    car_year = models.DateField(null=True, max_length=50)
+    sentiment = models.CharField(null=True, max_length=50)
+    review_id = models.IntegerField(null=False)
+    
+    # Create a toString method for object string representation
+    def __str__(self):
+        return "Name: " + self.name + "," + \
+            "Description: " + self.description
 # <HINT> Create a Car Model model `class CarModel(models.Model):`:
 # - Many-To-One relationship to Car Make model (One Car Make has many Car Models, using ForeignKey field)
 # - Name
