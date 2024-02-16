@@ -55,7 +55,7 @@ def post_request(url, json_payload, **kwargs):
     try:
         # Call get method of requests library with URL and parameters
         response = requests.post(url, headers={'Content-Type': 'application/json'},
-                                        json=json_payload['review'],
+                                        json=json_payload,
                                         params=kwargs)
         status_code = response.status_code
         print(json_payload)
