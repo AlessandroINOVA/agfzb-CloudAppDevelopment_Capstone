@@ -125,7 +125,7 @@ def get_dealerships(request):
         dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
         # Return a list of dealer short name
         return HttpResponse(dealer_names)
-
+        
 def get_dealer_details(request, dealer_id):
 
     if request.method == "GET":
@@ -147,13 +147,22 @@ def get_dealer_details(request, dealer_id):
 def add_review(request, dealer_id):
     if request.user.is_authenticated and request.method == 'POST':
         # Get user information from request.POST
+        url0 = "https://ideoalessand-3000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        dealer = get_dealer_by_id(url0, dealer_id)
         review = dict()
         review["time"] = datetime.utcnow().isoformat()
-        review["dealership"] = dealer_id
-        review["review"] = request.POST.get('review')
+        review["dealership"] = dealer[0]["full_name"]
+        review["id"] = dealer_id
+        review["name"] = dealer[0]["short_name"]
+        review["review"] = request.POST['review']
+        review["purchase"] = request.POST['purchase']
+        review["purchase_date"] = request.POST['purchase_date']
+        review["car_make"] = request.POST['car_make']
+        review["car_model"] = request.POST['car_model']
+        review["car_year"] = request.POST['car_year']
         json_payload = dict()
         json_payload["review"] = review
-        url = "https://ideoalessand-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review/"
+        url = "https://ideoalessand-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
         added_review = post_request(url, json_payload, dealer_id=dealer_id)
         print(added_review)
         return HttpResponse(added_review)

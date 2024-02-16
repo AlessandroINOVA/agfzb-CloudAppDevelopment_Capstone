@@ -55,9 +55,10 @@ def post_request(url, json_payload, **kwargs):
     try:
         # Call get method of requests library with URL and parameters
         response = requests.post(url, headers={'Content-Type': 'application/json'},
-                                        json=json_payload,
+                                        json=json_payload['review'],
                                         params=kwargs)
         status_code = response.status_code
+        print(json_payload)
         print("With status {} ".format(status_code))
         json_data = json.loads(response.text)
         return json_data
@@ -135,7 +136,7 @@ def get_dealer_by_id(url, dealerId):
                                    st=dealer_doc["st"], zip=dealer_doc["zip"])
             results.append(dealer_obj)
 
-    return results
+    return json_result
 
 
 def get_dealers_by_state(url, dealerState):
