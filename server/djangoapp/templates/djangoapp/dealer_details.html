@@ -5,12 +5,61 @@
     <title>Dealership Review</title>
     {% load static %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Dealership Review</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                {% if user.is_authenticated %}
+                    <a class="btn btn-link" href="about">About Us</a>
+                    <a class="btn btn-link" href="contact">Contacts</a>
+                    <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                    <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+                {% else %}
+                    <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <a class="btn btn-link" href="about">About Us</a>
+                            <a class="btn btn-link" href="contact">Contacts</a>
+                            <input type="text" class="form-control" placeholder="Username" name="username" >
+                            <input type="password" class="form-control" placeholder="Password" name="psw" >
+                            <button class="btn btn-primary" type="submit">Login</button>
+                            <a class="btn btn-link" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+                        </div>
+                    </form>
+                {% endif %}
+            </li>
+            </ul>
+        </div>
+    </nav>
 </head>
 
     <body>
-
+    <div class="container">
     <!--Add a nav bar here -->
-
+    <h1>Reviews for <b>{{ request.GET.dealer_name }}</b></h1>
+    <div class="card-columns">
+        {% for review in reviews_list %}
+        <div class="card">
+            <img class="card-img-left" src="{{MEDIA_URL}}/emoji/neutral.png">
+            <div class="card-body">
+                <div class="card-title">
+                    <h2>{{ review.review.car_make }}, {{ review.review.car_model }}</h2>
+                </div>
+                <div class="card-text">
+                    <h2>{{ review.review.purchase_date }}</h2>
+                </div>
+                <div class="card-text">
+                    {{ review.review.review}}
+                </div>
+            </div>
+        </img>
+        </div>
+        {% endfor %}
+    </div>
+    </div>
     <!-- Add reviews as cards -->
 
     </body>
