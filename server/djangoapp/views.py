@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import CarModel
+from .models import CarModel, CarMake
 from .restapis import get_dealers_from_cf, get_request, get_dealer_by_id, get_dealers_by_state, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -163,7 +163,8 @@ def get_dealer_details(request, dealer_id):
 
 def add_review(request, dealer_id):
     context = dict()
-    cars = CarModel.objects.select_related('CarMake').values()
+    cars = CarModel.objects.all()
+    #print(cars)
     context = {"dealer_id" : dealer_id, "cars": cars}
     if request.method == 'GET':
         return render(request, 'djangoapp/add_review.html', context)
@@ -179,9 +180,14 @@ def add_review(request, dealer_id):
         review["review"] = request.POST['review']
         review["purchase"] = request.POST['purchase']
         review["purchase_date"] = request.POST['purchase_date']
-        review["car_make"] = request.POST['car_make']
-        review["car_model"] = request.POST['car_model']
-        review["car_year"] = request.POST['car_year']
+        mmy = request.POST['mmy']
+        mmy = mmy.split("-")
+        car_model = mmy[1]
+        car_make = mmy[2]
+        car_year = mmy[3]
+        review["car_make"] = car_make
+        review["car_model"] = car_model
+        review["car_year"] = car_year
         json_payload = review
         url = "https://ideoalessand-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
         added_review = post_request(url, json_payload, dealer_id=dealer_id)
