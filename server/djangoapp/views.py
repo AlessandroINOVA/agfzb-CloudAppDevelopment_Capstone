@@ -139,7 +139,7 @@ def get_dealer_details(request, dealer_id):
         url = "https://ideoalessand-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
         # Get dealers from the URL
         context = dict()
-        context = {"reviews_list" : []}
+        context = {"reviews_list" : [], "dealer_id": dealer_id}
         reviews = get_dealer_reviews_from_cf(url, dealer_id)
         # Concat all dealer's short name
         #dealer_reviews = ' '.join([review.review for review in reviews])
