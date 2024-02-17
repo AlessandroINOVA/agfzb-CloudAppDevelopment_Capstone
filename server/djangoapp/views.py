@@ -144,7 +144,11 @@ def get_dealer_details(request, dealer_id):
         # Concat all dealer's short name
         #dealer_reviews = ' '.join([review.review for review in reviews])
         for review in reviews:
-            review.purchase_date = datetime.strptime(review.purchase_date, "%Y-%m-%d").strftime("%d-%m-%Y")
+            #review.purchase_date = datetime.strptime(review.purchase_date, "%Y-%m-%d").strftime("%d-%m-%Y")
+            sentiment = json.loads(review.sentiment)
+            review.sentiment = 'neutral' if not sentiment["entities"] else sentiment["entities"][0]['sentiment']['label']
+            #sentiment = json.loads(review.sentiment)
+            #print(sentiment["entities"])
             context["reviews_list"].append({"review" : review})
         # Return a list of dealer short name
         return render(request, 'djangoapp/dealer_details.html', context)
