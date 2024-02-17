@@ -183,8 +183,13 @@ def add_review(request, dealer_id):
         review["id"] = request.user.id
         review["name"] = request.user.username
         review["review"] = request.POST['review']
-        review["purchase"] = request.POST['purchase']
-        review["purchase_date"] = request.POST['purchase_date']
+        purchase = True
+        try:
+            purcharse = request.POST["title"]
+        except KeyError:
+            purchase = False
+        review["purchase"] = purchase
+        review["purchase_date"] = request.POST["purchase_date"]
         mmy = request.POST['mmy']
         mmy = mmy.split("-")
         car_model = mmy[1]
