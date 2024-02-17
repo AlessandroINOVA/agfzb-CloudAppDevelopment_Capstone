@@ -29,7 +29,7 @@ def login_request(request):
         if user is not None:
             # If user is valid, call login method to login current user
             login(request, user)
-            return redirect('djangoapp:login')
+            return redirect('djangoapp:index')
         else:
             # If not, return to login page again
             return render(request, 'djangoapp/index.html', context)
@@ -72,7 +72,7 @@ def logout_request(request):
     # Logout user in the request
     logout(request)
     # Redirect user back to course list view
-    return redirect('djangoapp:login')
+    return redirect('djangoapp:index')
 
 def static_template(request):
     # If the request method is GET
@@ -120,7 +120,7 @@ def get_dealerships(request):
     context = dict()
     context = {"dealership_list": []}
     if request.method == "GET":
-        url = "https://ideoalessand-3000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        url = "https://ideoalessand-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
         # Concat all dealer's short name
@@ -136,7 +136,7 @@ def get_dealerships(request):
 def get_dealer_details(request, dealer_id):
 
     if request.method == "GET":
-        url = "https://ideoalessand-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
+        url = "https://ideoalessand-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
         # Get dealers from the URL
         context = dict()
         context = {"reviews_list" : [], "dealer_id": dealer_id}
@@ -178,7 +178,7 @@ def add_review(request, dealer_id):
         review["car_model"] = request.POST['car_model']
         review["car_year"] = request.POST['car_year']
         json_payload = review
-        url = "https://ideoalessand-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
+        url = "https://ideoalessand-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
         added_review = post_request(url, json_payload, dealer_id=dealer_id)
         print(added_review)
         return HttpResponse(added_review)
