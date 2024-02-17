@@ -134,12 +134,14 @@ def get_dealerships(request):
         #return HttpResponse(dealer_names)
         
 def get_dealer_details(request, dealer_id):
-
+    url1 = "https://ideoalessand-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+    dealer = get_dealer_by_id(url1, dealer_id)
+    dealer_name = dealer[0]["full_name"]
     if request.method == "GET":
         url = "https://ideoalessand-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews"
         # Get dealers from the URL
         context = dict()
-        context = {"reviews_list" : [], "dealer_id": dealer_id}
+        context = {"dealer_name" : dealer_name, "reviews_list" : [], "dealer_id": dealer_id}
         reviews = get_dealer_reviews_from_cf(url, dealer_id)
         # Concat all dealer's short name
         #dealer_reviews = ' '.join([review.review for review in reviews])
@@ -164,8 +166,11 @@ def get_dealer_details(request, dealer_id):
 def add_review(request, dealer_id):
     context = dict()
     cars = CarModel.objects.all()
+    url1 = "https://ideoalessand-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+    dealer = get_dealer_by_id(url1, dealer_id)
+    dealer_name = dealer[0]["full_name"]
     #print(cars)
-    context = {"dealer_id" : dealer_id, "cars": cars}
+    context = {"dealer_name" : dealer_name, "dealer_id" : dealer_id, "cars": cars}
     if request.method == 'GET':
         return render(request, 'djangoapp/add_review.html', context)
     elif request.user.is_authenticated and request.method == 'POST':
@@ -192,4 +197,8 @@ def add_review(request, dealer_id):
         url = "https://ideoalessand-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
         added_review = post_request(url, json_payload, dealer_id=dealer_id)
         print(added_review)
-        return HttpResponse(added_review)
+        #return HttpResponse(added_review)
+        if added_review:
+            return redirect('djangoapp:dealer_details', dealer_id=dealer_id)
+        else:
+            return HttpResponse(added_review)

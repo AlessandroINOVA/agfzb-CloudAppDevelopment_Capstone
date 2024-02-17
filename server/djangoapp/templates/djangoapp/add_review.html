@@ -48,11 +48,11 @@
     <body>
     <div class="container">
     <!--Add review form here -->
-    <h1>Add review about <b>{{ request.GET.dealer_name }}</b></h1>
+    <h1>Add review about <b>{{ dealer_name }}</b></h1>
     <form method="post" action="{% url 'djangoapp:add_review' dealer_id %}">
         <h4>Enter the review content: </h4>
         <textarea class="form-control" id="content" name="review" rows="2" required></textarea>
-        <h4>Has purchased the car from {{ request.GET.dealer_name }}?</h4>
+        <h4>Has purchased the car from {{ dealer_name }}?</h4>
         <input class="form-control" type="checkbox" name="purchase" id="purchasecheck">
         <h5>(select purchased car information if checked)</h5>
         <h4>Select your car (model-make-year): </h4>
