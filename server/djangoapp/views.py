@@ -117,14 +117,21 @@ def contact_us(request):
 def get_dealerships(request):
     dealerState = "California"
     dealerId = 10
+    context = dict()
+    context = {"dealership_list": []}
     if request.method == "GET":
         url = "https://ideoalessand-3000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
         # Concat all dealer's short name
-        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        # dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        for dealer in dealerships:
+            context["dealership_list"].append({"id": dealer.id, "name": dealer.full_name, "city": dealer.city, "address": dealer.address,
+            "zip": dealer.zip, "state" : dealer.st})
         # Return a list of dealer short name
-        return HttpResponse(dealer_names)
+        print(context["dealership_list"])
+        return render(request, 'djangoapp/index.html', context)
+        #return HttpResponse(dealer_names)
         
 def get_dealer_details(request, dealer_id):
 
