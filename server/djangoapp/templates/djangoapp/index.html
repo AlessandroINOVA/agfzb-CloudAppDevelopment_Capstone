@@ -41,9 +41,9 @@
     </nav>
 </head>
 
-    <body>
+<body>
     <!-- Remove this line the first time you edit this file -->
-    <table class="table" id="table">
+    <table class="table" id="table" data-filter-control="true">
         <thead>
             <tr>
                 <th data-field="id">ID</th>
@@ -67,10 +67,15 @@
             {% endfor %}
         </tbody>
     </table>
+    <script>
+        $(function() {
+          $('#table').bootstrapTable()
+        })
+    </script>
     <!--Add a nav bar here -->
 
     <!--Add a dealer table here -->
 
-    </body>
+</body>
 
 </html>
